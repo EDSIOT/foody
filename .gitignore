@@ -1,0 +1,42 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+
+# Environnements virtuels
+.venv/
+venv/
+env/
+
+# uv
+.uv/
+
+# --- Secrets / config ---
+.env
+.env.*
+!.env.example
+
+# --- Node / Nuxt (frontend, à venir) ---
+node_modules/
+.nuxt/
+.output/
+dist/
+
+# --- Base de données locale ---
+*.sqlite3
+*.db
+pgdata/
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Données brutes (à discuter selon ta stratégie) ---
+# data/raw/
