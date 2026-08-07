@@ -6,6 +6,7 @@ export default defineNuxtConfig({
     }
   },
   modules: ['@nuxtjs/tailwindcss'],
+  css: ['leaflet/dist/leaflet.css'],
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true }
 })
