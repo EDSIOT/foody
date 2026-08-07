@@ -17,5 +17,8 @@
     "vue": "^3.5.40",
     "vue-chart.js": "^0.2.0",
     "vue-router": "^5.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.2"
   }
 }
