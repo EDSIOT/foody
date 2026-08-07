@@ -25,34 +25,34 @@ Le projet illustre un pipeline de données de bout en bout — ingestion, nettoy
 ## Architecture
  
 ```
-┌─────────────────────┐
-│   Google Trends       │   (via pytrends, non officiel)
-│   interest_by_region   │
-└──────────┬───────────┘
+┌────────────────────────────┐
+│   Google Trends            │   (via pytrends, non officiel)
+│   interest_by_region       │
+└──────────┬─────────────────┘
            │  cron quotidien (GitHub Actions)
            ▼
-┌─────────────────────┐
-│  run_pipeline.py       │
-│  - ingestion par lots   │
-│  - retry / backoff      │
+┌────────────────────────────┐
+│  run_pipeline.py           │
+│  - ingestion par lots      │
+│  - retry / backoff         │
 │  - normalisation par ancre │
-└──────────┬───────────┘
+└──────────┬─────────────────┘
            ▼
-┌─────────────────────┐
-│  PostgreSQL (Supabase) │
-│  table raw_cuisine_trends│
-└──────────┬───────────┘
+┌────────────────────────────┐
+│  PostgreSQL (Supabase)     │
+│  table raw_cuisine_trends  │
+└──────────┬─────────────────┘
            ▼
-┌─────────────────────┐
-│  API FastAPI            │
-│  /cuisines, /cuisines/top│
-│  /cities                 │
-└──────────┬───────────┘
+┌────────────────────────────┐
+│  API FastAPI               │
+│  /cuisines, /cuisines/top  │
+│  /cities                   │
+└──────────┬─────────────────┘
            ▼
-┌─────────────────────┐
-│  Frontend Nuxt/Vue      │
+┌────────────────────────────┐
+│  Frontend Nuxt/Vue         │
 │  tableau, carte, graphiques│
-└─────────────────────┘
+└────────────────────────────┘
 ```
  
 ## Stack technique
