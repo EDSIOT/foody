@@ -1,8 +1,27 @@
 <template>
   <div class="flex flex-col md:flex-row gap-4">
-    <!-- Carte -->
-    <div class="relative flex-1">
-      <div ref="mapContainer" class="w-full h-[600px] rounded-xl overflow-hidden border border-stone-200" />
+    <!-- Carte SVG statique -->
+    <div class="relative flex-1 bg-white rounded-xl border border-stone-200 p-4">
+      <svg
+        ref="svgRef"
+        :viewBox="`0 0 ${width} ${height}`"
+        class="w-full h-auto"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        <path
+          v-for="feature in features"
+          :key="feature.properties.nom"
+          :d="pathGenerator(feature)"
+          :fill="getTopCuisineColor(feature.properties.nom)"
+          :fill-opacity="hoveredRegion === feature.properties.nom ? 1 : 0.8"
+          stroke="#fff"
+          stroke-width="1.5"
+          class="cursor-pointer transition-all duration-150"
+          @mouseenter="hoveredRegion = feature.properties.nom; selectedRegion = feature.properties.nom"
+          @mouseleave="hoveredRegion = null"
+          @click="selectedRegion = feature.properties.nom"
+        />
+      </svg>
     </div>
 
     <!-- Panneau latéral -->
@@ -47,20 +66,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import * as d3 from 'd3'
 
 const props = defineProps({
   top3ByRegion: {
     type: Object,
     default: () => ({})
-    // format : { "Île-de-France": [{cuisine_name, interest_score, rank}, ...], ... }
   }
 })
 
-const mapContainer = ref(null)
+const width = 700
+const height = 700
+
+const features = ref([])
+const hoveredRegion = ref(null)
 const selectedRegion = ref(null)
-let map = null
-let geoLayer = null
 
 const CUISINE_COLORS = {
   'Pizza': '#e07856',
@@ -75,7 +96,7 @@ const CUISINE_COLORS = {
   'bar': '#5c6b73',
   'café': '#8d6a4a',
 }
-const FALLBACK_COLOR = '#9b9b9b'
+const FALLBACK_COLOR = '#e5e5e5'
 const getColor = (cuisine) => CUISINE_COLORS[cuisine] || FALLBACK_COLOR
 
 const normalizeName = (str) =>
@@ -101,60 +122,17 @@ const getTopCuisineColor = (regionName) => {
   return top1 ? getColor(top1.cuisine_name) : FALLBACK_COLOR
 }
 
-const styleFeature = (feature) => {
-  const regionName = feature.properties.nom
-  return {
-    fillColor: getTopCuisineColor(regionName),
-    weight: 1.5,
-    color: '#fff',
-    fillOpacity: 0.75,
-  }
-}
+// Projection adaptée à la France métropolitaine, centrée et mise à l'échelle du viewBox
+const projection = d3.geoConicConformal()
+  .center([2.454071, 46.279229]) // centre approximatif de la France
+  .scale(3200)
+  .translate([width / 2, height / 2])
 
-const onEachFeature = (feature, layer) => {
-  const regionName = feature.properties.nom
-
-  layer.on({
-    mouseover: (e) => {
-      e.target.setStyle({ fillOpacity: 0.9, weight: 2.5 })
-      selectedRegion.value = regionName
-    },
-    mouseout: (e) => {
-      e.target.setStyle({ fillOpacity: 0.75, weight: 1.5 })
-    },
-    click: (e) => {
-      selectedRegion.value = regionName
-      map.fitBounds(e.target.getBounds(), { maxZoom: 7 })
-    },
-  })
-}
-
-const renderMap = async () => {
-  const L = await import('leaflet')
-  if (geoLayer) geoLayer.remove()
-
-  const response = await fetch('/geo/old_regions.geojson')
-  const geojson = await response.json()
-
-  geoLayer = L.default.geoJSON(geojson, {
-    style: styleFeature,
-    onEachFeature: onEachFeature,
-  }).addTo(map)
-}
+const pathGenerator = computed(() => d3.geoPath().projection(projection))
 
 onMounted(async () => {
-  const L = await import('leaflet')
-  map = L.default.map(mapContainer.value).setView([46.6, 2.3], 5.5)
-
-  L.default.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
-    maxZoom: 19,
-  }).addTo(map)
-
-  await renderMap()
-})
-
-onBeforeUnmount(() => {
-  if (map) map.remove()
+  const response = await fetch('/geo/old_regions.geojson')
+  const geojson = await response.json()
+  features.value = geojson.features
 })
 </script>
