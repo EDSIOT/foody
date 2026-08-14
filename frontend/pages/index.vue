@@ -1,6 +1,8 @@
+import './index.css'
+
 <template>
   <div class="p-6 max-w-6xl mx-auto">
-    <h1 class="text-2xl font-bold mb-1 text-stone-800">Foody</h1>
+    <h1>Foody</h1>
     <p class="text-stone-500 mb-6">Tendances culinaires par région, mises à jour quotidiennement</p>
 
     <div v-if="pending">Chargement...</div>
