@@ -1,15 +1,42 @@
 
 
 <template>
-  <div class="p-6 max-w-6xl mx-auto">
-    <h1>Foody</h1>
-    <p class="text-stone-500 mb-6">Tendances culinaires par région, mises à jour quotidiennement</p>
+  <div class="p-6 max-w-6xl mx-auto space-y-12">
+    <div>
+      <h1 class="font-display text-3xl font-bold text-stone-800 mb-1">Foody</h1>
+      <p class="text-stone-500">Tendances culinaires par région, mises à jour quotidiennement</p>
+    </div>
 
-    <div v-if="pending">Chargement...</div>
-    <div v-else-if="error">Erreur: {{ error.message }}</div>
-    <RegionExplorer v-else :top3-by-region="data" />
+    <!-- Section 1 : carte plate, top 3 par région -->
+    <section>
+      <h2 class="font-display text-xl font-semibold text-stone-800 mb-4">
+        Top 3 des cuisines par région
+      </h2>
+      <div v-if="pendingTop3">Chargement...</div>
+      <div v-else-if="errorTop3">Erreur: {{ errorTop3.message }}</div>
+      <RegionExplorer v-else :top3-by-region="top3Data" />
+    </section>
+
+    <!-- Séparateur visuel -->
+    <hr class="border-stone-200" />
+
+    <!-- Section 2 : carte en colonnes 3D, par cuisine sélectionnée -->
+    <section>
+      <h2 class="font-display text-xl font-semibold text-stone-800 mb-4">
+        Popularité d'une cuisine par région
+      </h2>
+      <CuisinePopularityMap />
+    </section>
   </div>
 </template>
+
+<script setup>
+const { getTop3PerRegion } = useApi()
+const { data: top3Data, pending: pendingTop3, error: errorTop3 } = await useAsyncData(
+  'top3-regions',
+  () => getTop3PerRegion(7)
+)
+</script>
 
 <style>
 h1 {
@@ -29,7 +56,3 @@ h2 {
 }
 </style>
 
-<script setup>
-const { getTop3PerRegion } = useApi()
-const { data, pending, error } = await useAsyncData('top3-regions', () => getTop3PerRegion(7))
-</script>

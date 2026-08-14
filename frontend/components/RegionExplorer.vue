@@ -54,7 +54,7 @@
     <div class="w-full md:w-80 shrink-0">
       <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-5 sticky top-4 min-h-[300px]">
         <div v-if="!selectedRegion" class="text-stone-400 text-sm flex flex-col items-center justify-center h-full py-16 text-center">
-          <span class="text-3xl mb-2">🗺️</span>
+          <h2>Infos</h2>
           Survolez ou cliquez sur une région pour voir ses tendances culinaires
         </div>
 

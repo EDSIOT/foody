@@ -18,5 +18,13 @@ export const useApi = () => {
     return await $fetch(`${base}/regions/top3`, { params: { days } })
   }
 
-return { getTopCuisines, getCities, getCuisineHistory, getTop3PerRegion }
+  const getCuisinesList = async () => {
+    return await $fetch(`${base}/cuisines/list`)
+  }
+
+  const getRegionScoresForCuisine = async (cuisine, days = 7) => {
+    return await $fetch(`${base}/regions/by-cuisine`, { params: { cuisine, days } })
+  }
+
+  return { getTopCuisines, getCities, getCuisineHistory, getTop3PerRegion, getCuisinesList, getRegionScoresForCuisine }
 }

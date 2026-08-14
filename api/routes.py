@@ -109,3 +109,29 @@ def get_top3_per_region(days: int = Query(7)):
         })
 
     return grouped    
+
+@router.get("/cuisines/list")
+def get_cuisines_list():
+    """Liste des cuisines disponibles, pour peupler le menu déroulant."""
+    query = "SELECT DISTINCT cuisine_name FROM raw_cuisine_trends ORDER BY cuisine_name"
+    with engine.connect() as conn:
+        result = conn.execute(text(query))
+        return [row[0] for row in result]
+
+
+@router.get("/regions/by-cuisine")
+def get_region_scores_for_cuisine(cuisine: str = Query(...), days: int = Query(7)):
+    """Score le plus récent d'une cuisine donnée, pour chaque région."""
+    query = """
+        SELECT DISTINCT ON (region_name)
+            region_name, interest_score, captured_at
+        FROM raw_cuisine_trends
+        WHERE cuisine_name = :cuisine
+          AND captured_at >= now() - (:days || ' days')::interval
+        ORDER BY region_name, captured_at DESC
+    """
+    with engine.connect() as conn:
+        result = conn.execute(text(query), {"cuisine": cuisine, "days": days})
+        rows = [dict(row._mapping) for row in result]
+
+    return {row["region_name"]: row["interest_score"] for row in rows}
