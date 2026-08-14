@@ -1,31 +1,15 @@
 <template>
-  <div class="p-6">
-    <h1 class="text-2xl font-bold mb-4">Foody — Tendances culinaires par ville</h1>
+  <div class="p-6 max-w-6xl mx-auto">
+    <h1 class="text-2xl font-bold mb-1 text-stone-800">Foody</h1>
+    <p class="text-stone-500 mb-6">Tendances culinaires par région, mises à jour quotidiennement</p>
 
     <div v-if="pending">Chargement...</div>
     <div v-else-if="error">Erreur: {{ error.message }}</div>
-    <div v-else>
-      <table class="w-full border-collapse">
-        <thead>
-          <tr class="border-b">
-            <th class="text-left p-2">Ville</th>
-            <th class="text-left p-2">Cuisine dominante</th>
-            <th class="text-left p-2">Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in data" :key="item.city_name" class="border-b">
-            <td class="p-2">{{ item.city_name }}</td>
-            <td class="p-2">{{ item.cuisine_name }}</td>
-            <td class="p-2">{{ item.interest_score.toFixed(1) }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <RegionExplorer v-else :top3-by-region="data" />
   </div>
 </template>
 
 <script setup>
-const { getTopCuisines } = useApi()
-const { data, pending, error } = await useAsyncData('top-cuisines', () => getTopCuisines(7))
+const { getTop3PerRegion } = useApi()
+const { data, pending, error } = await useAsyncData('top3-regions', () => getTop3PerRegion(7))
 </script>
