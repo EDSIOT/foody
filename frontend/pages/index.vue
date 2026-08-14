@@ -22,6 +22,8 @@ h1 {
 h2 {
   font-family: Italianno, sans-serif;
   font-size: 2.5rem;
+  padding: 0;
+  margin-top: -1rem;
   color: #e07856 ;
 ;
 }

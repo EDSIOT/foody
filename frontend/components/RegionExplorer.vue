@@ -8,22 +8,45 @@
         class="w-full h-auto"
         preserveAspectRatio="xMidYMid meet"
       >
-        <path
-          v-for="feature in features"
-          :key="feature.properties.nom"
-          :d="pathGenerator(feature)"
-          :fill="getTopCuisineColor(feature.properties.nom)"
-          :fill-opacity="hoveredRegion === feature.properties.nom ? 1 : 0.8"
-          stroke="#fff"
-          :stroke-width="hoveredRegion === feature.properties.nom ? 3 : 1.5"
-          :class="[
-                    'cursor-pointer transition-all duration-150 origin-center',
-                    hoveredRegion === feature.properties.nom ? 'scale-105' : 'scale-100'
-                ]"
-          @mouseenter="hoveredRegion = feature.properties.nom; selectedRegion = feature.properties.nom"
-          @mouseleave="hoveredRegion = null"
-          @click="selectedRegion = feature.properties.nom"
-        />
+        <g v-for="feature in features" :key="feature.properties.nom">
+    <!-- Couche d'extrusion (l'épaisseur simulée), visible seulement au survol -->
+    <path
+      v-if="hoveredRegion === feature.properties.nom"
+      :d="pathGenerator(feature)"
+      :fill="getTopCuisineColor(feature.properties.nom)"
+      class="origin-center"
+      :style="{
+        transformBox: 'fill-box',
+        transform: 'translate(2px, 4px) scale(1.05)',
+        filter: 'brightness(0.65)',
+        opacity: 0.9
+      }"
+    />
+
+    <!-- Couche principale (la face visible du "plot") -->
+    <path
+      :d="pathGenerator(feature)"
+      :fill="getTopCuisineColor(feature.properties.nom)"
+      :fill-opacity="hoveredRegion === feature.properties.nom ? 1 : 0.8"
+      stroke="#fff"
+      stroke-width="1.5"
+      :z-index="hoveredRegion === feature.properties.nom ? 10 : 1"
+      :class="[
+        'cursor-pointer transition-all duration-200 ease-out origin-center',
+        hoveredRegion === feature.properties.nom ? 'scale-105' : 'scale-100'
+      ]"
+      :style="{
+        transformBox: 'fill-box',
+        transform: hoveredRegion === feature.properties.nom ? 'translateY(-4px)' : 'translateY(0)',
+        filter: hoveredRegion === feature.properties.nom
+          ? 'drop-shadow(0 8px 12px rgba(0,0,0,0.35)) brightness(1.08)'
+          : 'none'
+      }"
+      @mouseenter="hoveredRegion = feature.properties.nom; selectedRegion = feature.properties.nom"
+      @mouseleave="hoveredRegion = null"
+      @click="selectedRegion = feature.properties.nom"
+    />
+  </g>
       </svg>
     </div>
 
@@ -37,7 +60,7 @@
 
         <div v-else>
           <p class="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-1">Région</p>
-          <h2 class="mb-1">{{ selectedRegion }}</h2>
+          <h2>{{ selectedRegion }}</h2>
 
           <div v-if="!selectedTop3 || selectedTop3.length === 0" class="text-stone-400 text-sm">
             Pas de donnée disponible pour cette région
@@ -98,6 +121,8 @@ const CUISINE_COLORS = {
   'restaurant indien': '#f2994a',
   'bar': '#5c6b73',
   'café': '#8d6a4a',
+  'crêperie': '#f2c94c',
+  'barbecue': '#4d2f0e',
 }
 const FALLBACK_COLOR = '#e5e5e5'
 const getColor = (cuisine) => CUISINE_COLORS[cuisine] || FALLBACK_COLOR
