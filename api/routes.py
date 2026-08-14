@@ -7,20 +7,20 @@ engine = get_engine()
 
 @router.get("/cuisines")
 def get_cuisines(
-    city: str | None = Query(None, description="Filtrer par ville"),
+    region: str | None = Query(None, description="Filtrer par ville"),
     cuisine: str | None = Query(None, description="Filtrer par type de cuisine"),
     days: int = Query(7, description="Nombre de jours d'historique")
 ):
     query = """
-        SELECT cuisine_name, city_name, interest_score, captured_at
+        SELECT cuisine_name, region_name, interest_score, captured_at
         FROM raw_cuisine_trends
         WHERE captured_at >= now() - (:days || ' days')::interval
     """
     params = {"days": days}
 
-    if city:
-        query += " AND city_name = :city"
-        params["city"] = city
+    if region:
+        query += " AND region_name = :region"
+        params["region"] = region
     if cuisine:
         query += " AND cuisine_name = :cuisine"
         params["cuisine"] = cuisine
@@ -35,14 +35,14 @@ def get_cuisines(
 
 
 @router.get("/cuisines/top")
-def get_top_cuisine_per_city(days: int = Query(7)):
+def get_top_cuisine_per_region(days: int = Query(7)):
     """Retourne la cuisine dominante par ville — utile pour la carte."""
     query = """
-        SELECT DISTINCT ON (city_name)
-            city_name, cuisine_name, interest_score, captured_at
+        SELECT DISTINCT ON (region_name)
+            region_name, cuisine_name, interest_score, captured_at
         FROM raw_cuisine_trends
         WHERE captured_at >= now() - (:days || ' days')::interval
-        ORDER BY city_name, interest_score DESC, captured_at DESC
+        ORDER BY region_name, interest_score DESC, captured_at DESC
     """
     with engine.connect() as conn:
         result = conn.execute(text(query), {"days": days})
@@ -52,7 +52,7 @@ def get_top_cuisine_per_city(days: int = Query(7)):
 
 @router.get("/cities")
 def get_cities():
-    query = "SELECT DISTINCT city_name FROM raw_cuisine_trends ORDER BY city_name"
+    query = "SELECT DISTINCT region_name FROM raw_cuisine_trends ORDER BY region_name"
     with engine.connect() as conn:
         result = conn.execute(text(query))
         return [row[0] for row in result]
