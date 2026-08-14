@@ -56,3 +56,56 @@ def get_cities():
     with engine.connect() as conn:
         result = conn.execute(text(query))
         return [row[0] for row in result]
+    
+@router.get("/regions/top3")
+def get_top3_per_region(days: int = Query(7)):
+    """Retourne les 3 cuisines les plus populaires pour chaque région."""
+    query = """
+        WITH ranked AS (
+            SELECT
+                region_name,
+                cuisine_name,
+                interest_score,
+                captured_at,
+                ROW_NUMBER() OVER (
+                    PARTITION BY region_name, cuisine_name
+                    ORDER BY captured_at DESC
+                ) AS rn
+            FROM raw_cuisine_trends
+            WHERE captured_at >= now() - (:days || ' days')::interval
+        ),
+        latest AS (
+            SELECT region_name, cuisine_name, interest_score
+            FROM ranked WHERE rn = 1
+        ),
+        top3 AS (
+            SELECT
+                region_name,
+                cuisine_name,
+                interest_score,
+                ROW_NUMBER() OVER (
+                    PARTITION BY region_name
+                    ORDER BY interest_score DESC
+                ) AS rank
+            FROM latest
+        )
+        SELECT region_name, cuisine_name, interest_score, rank
+        FROM top3
+        WHERE rank <= 3
+        ORDER BY region_name, rank
+    """
+    with engine.connect() as conn:
+        result = conn.execute(text(query), {"days": days})
+        rows = [dict(row._mapping) for row in result]
+
+    # Regrouper par région pour faciliter l'usage côté frontend
+    grouped = {}
+    for row in rows:
+        region = row["region_name"]
+        grouped.setdefault(region, []).append({
+            "cuisine_name": row["cuisine_name"],
+            "interest_score": row["interest_score"],
+            "rank": row["rank"]
+        })
+
+    return grouped    

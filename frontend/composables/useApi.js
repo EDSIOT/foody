@@ -16,3 +16,9 @@ export const useApi = () => {
 
   return { getTopCuisines, getCities, getCuisineHistory }
 }
+
+const getTop3PerRegion = async (days = 7) => {
+  return await $fetch(`${base}/regions/top3`, { params: { days } })
+}
+
+return { getTopCuisines, getCities, getCuisineHistory, getTop3PerRegion }
