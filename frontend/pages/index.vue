@@ -1,4 +1,4 @@
-import './index.css'
+
 
 <template>
   <div class="p-6 max-w-6xl mx-auto">
@@ -10,6 +10,22 @@ import './index.css'
     <RegionExplorer v-else :top3-by-region="data" />
   </div>
 </template>
+
+<style>
+h1 {
+  font-family: Limelight, sans-serif;
+  font-size: 3rem;
+  color: #e07856 ;
+;
+}
+
+h2 {
+  font-family: Italianno, sans-serif;
+  font-size: 2.5rem;
+  color: #e07856 ;
+;
+}
+</style>
 
 <script setup>
 const { getTop3PerRegion } = useApi()

@@ -5,8 +5,7 @@ export default defineNuxtConfig({
       apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000'
     }
   },
-  modules: ['@nuxtjs/tailwindcss'],
-  css: ['leaflet/dist/leaflet.css'],
+  modules: ['@nuxtjs/tailwindcss','@nuxt/fonts'],
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true }
 })
