@@ -15,8 +15,11 @@
           :fill="getTopCuisineColor(feature.properties.nom)"
           :fill-opacity="hoveredRegion === feature.properties.nom ? 1 : 0.8"
           stroke="#fff"
-          stroke-width="1.5"
-          class="cursor-pointer transition-all duration-150"
+          :stroke-width="hoveredRegion === feature.properties.nom ? 3 : 1.5"
+          :class="[
+                    'cursor-pointer transition-all duration-150 origin-center',
+                    hoveredRegion === feature.properties.nom ? 'scale-105' : 'scale-100'
+                ]"
           @mouseenter="hoveredRegion = feature.properties.nom; selectedRegion = feature.properties.nom"
           @mouseleave="hoveredRegion = null"
           @click="selectedRegion = feature.properties.nom"
@@ -34,7 +37,7 @@
 
         <div v-else>
           <p class="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-1">Région</p>
-          <h2 class="mb-4">{{ selectedRegion }}</h2>
+          <h2 class="mb-1">{{ selectedRegion }}</h2>
 
           <div v-if="!selectedTop3 || selectedTop3.length === 0" class="text-stone-400 text-sm">
             Pas de donnée disponible pour cette région
