@@ -3,7 +3,7 @@
 <template>
   <div class="p-6 max-w-6xl mx-auto space-y-12">
     <div>
-      <h1 class="font-display text-3xl font-bold text-stone-800 mb-1">Foody</h1>
+      <h1>Foody</h1>
       <p class="text-stone-500">Tendances culinaires par région, mises à jour quotidiennement</p>
     </div>
 

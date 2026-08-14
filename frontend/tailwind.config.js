@@ -2,7 +2,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Anton"', 'sans-serif'],
+        display: ['"Limelight"', 'sans-serif'],
       },
     },
   },
