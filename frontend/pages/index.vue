@@ -38,21 +38,26 @@ const { data: top3Data, pending: pendingTop3, error: errorTop3 } = await useAsyn
 )
 </script>
 
+<style scoped>
+  div {
+    background-color: #fcf6ee;
+  }
+</style>
 <style>
-h1 {
-  font-family: Limelight, sans-serif;
-  font-size: 3rem;
-  color: #e07856 ;
-;
-}
+  h1 {
+    font-family: Limelight, sans-serif;
+    font-size: 3rem;
+    color: #e07856 ;
+  ;
+  }
 
-h2 {
-  font-family: Italianno, sans-serif;
-  font-size: 2.5rem;
-  padding: 0;
-  margin-top: -1rem;
-  color: #e07856 ;
-;
-}
+  h2 {
+    font-family: Italianno, sans-serif;
+    font-size: 2.5rem;
+    padding: 0;
+    margin-top: -1rem;
+    color: #e07856 ;
+  ;
+  }
 </style>
 
