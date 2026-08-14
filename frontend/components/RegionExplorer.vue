@@ -34,7 +34,7 @@
 
         <div v-else>
           <p class="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-1">Région</p>
-          <h2 class="text-xl font-bold text-stone-800 mb-4">{{ selectedRegion }}</h2>
+          <h2 class="mb-4">{{ selectedRegion }}</h2>
 
           <div v-if="!selectedTop3 || selectedTop3.length === 0" class="text-stone-400 text-sm">
             Pas de donnée disponible pour cette région
