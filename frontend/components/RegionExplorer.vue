@@ -131,7 +131,7 @@ const projection = d3.geoConicConformal()
 const pathGenerator = computed(() => d3.geoPath().projection(projection))
 
 onMounted(async () => {
-  const response = await fetch('/geo/old_regions.geojson')
+  const response = await fetch('/geo/regions.geojson')
   const geojson = await response.json()
   features.value = geojson.features
 })
