@@ -4,7 +4,7 @@
   <div class="p-6 max-w-6xl mx-auto space-y-12">
     <div>
       <h1>Foody</h1>
-      <p class="text-stone-500">Tendances culinaires par région, mises à jour quotidiennement</p>
+      <p class="text-stone-500">Tendances culinaires selon les recherches google, mises à jour quotidiennement</p>
     </div>
 
     <!-- Section 1 : carte plate, top 3 par région -->
