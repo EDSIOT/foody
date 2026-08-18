@@ -1,37 +1,73 @@
 <template>
   <div class="flex flex-col md:flex-row gap-4">
-    <!-- Carte en colonnes -->
-    <div class="relative flex-1 bg-gradient-to-b from-stone-50 to-stone-100 rounded-xl border border-stone-200 p-4">
-      <svg
-        :viewBox="`0 0 ${width} ${height}`"
-        class="w-full h-auto"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <g v-for="col in sortedColumns" :key="col.name">
-          <!-- Murs (faces latérales visibles) -->
-          <path
-            v-for="(wall, i) in col.walls"
-            :key="`${col.name}-wall-${i}`"
-            :d="wall"
-            :fill="hoveredRegion === col.name ? '#e07856' : col.color"
-            
-            stroke="none"
-          />
-          <!-- Toit (face du dessus) -->
-          <path
-            :d="col.topPath"
-            :fill="hoveredRegion === col.name ? '#e07856' : col.color"
-            :fill-opacity="hoveredRegion === col.name ? 1 : 0.9"
-            stroke="#fff"
-            stroke-width="1.2"
-            class="cursor-pointer transition-all duration-150"
-            @mouseenter="hoveredRegion = col.name; selectedRegion = col.name"
-            @mouseleave="hoveredRegion = null"
-            @click="selectedRegion = col.name"
-          />
-        </g>
-      </svg>
-    </div>
+  <div class="relative flex-1 bg-gradient-to-b from-stone-50 to-stone-100 rounded-xl border border-stone-200 p-4">
+    <svg
+      :viewBox="`0 0 ${width} ${height}`"
+      class="w-full h-auto"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <g v-for="col in sortedColumns" :key="col.name">
+        <path
+          v-for="(wall, i) in col.walls.path"
+          :key="`${col.name}-wall-${i}`"
+          :d="wall"
+          :fill="
+            d3.interpolateRgb(
+              d3.color(col.color).darker(1.5),
+              col.color
+            )(col.walls.dot[i])
+          "
+          fill-opacity="1"
+          stroke="none"
+        />
+        <path
+          :d="col.topPath"
+          :fill="hoveredRegion === col.name ? d3.color(col.color).darker(-0.5) : col.color"
+          stroke="#fff"
+          stroke-width="1.2"
+          class="cursor-pointer transition-all duration-150"
+          @mouseenter="hoveredRegion = col.name; selectedRegion = col.name"
+          @mouseleave="hoveredRegion = null"
+          @click="selectedRegion = col.name"
+        />
+      </g>
+
+      <!-- DEBUG: flèche représentant CAMERA_DIR -->
+      <g v-if="showCameraDebug">
+        <defs>
+          <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+            <polygon points="0 0, 9 3, 0 6" fill="red" />
+          </marker>
+        </defs>
+        <line
+          :x1="width / 2"
+          :y1="height / 2"
+          :x2="width / 2 + CAMERA_DIR.x * 150"
+          :y2="height / 2 + CAMERA_DIR.y * 150"
+          stroke="red"
+          stroke-width="3"
+          marker-end="url(#arrowhead)"
+        />
+        <circle :cx="width / 2" :cy="height / 2" r="5" fill="red" />
+        <text
+          :x="width / 2 + CAMERA_DIR.x * 150 + 10"
+          :y="height / 2 + CAMERA_DIR.y * 150"
+          fill="red"
+          font-size="14"
+          font-weight="bold"
+        >
+          CAMERA_DIR ({{ CAMERA_DIR.x.toFixed(2) }}, {{ CAMERA_DIR.y.toFixed(2) }})
+        </text>
+      </g>
+    </svg>
+
+    <button
+      @click="showCameraDebug = !showCameraDebug"
+      class="absolute top-2 right-2 text-xs bg-white border border-stone-300 rounded px-2 py-1 shadow-sm hover:bg-stone-50"
+    >
+      {{ showCameraDebug ? 'Masquer' : 'Afficher' }} CAMERA_DIR
+    </button>
+  </div>
 
     <!-- Panneau latéral -->
     <div class="w-full md:w-80 shrink-0 space-y-4">
@@ -61,13 +97,14 @@
         </div>
       </div>
     </div>
-  </div>
+  </div>  
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import * as d3 from 'd3'
 
+const showCameraDebug = ref(true) // affiche le vecteur CAMERA_DIR pour debug
 const width = 700
 const height = 700
 
@@ -99,8 +136,9 @@ const getColor = (cuisine) => CUISINE_COLORS[cuisine] || FALLBACK_COLOR
 const normalizeName = (str) =>
   str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim()
 
+// Projection adaptée à la France métropolitaine, centrée et mise à l'échelle du viewBox
 const projection = d3.geoConicConformal()
-  .center([2.454071, 46.279229])
+  .center([2.454071, 46.279229]) // centre approximatif de la France
   .scale(3200)
   .translate([width / 2, height / 2])
 
@@ -135,18 +173,27 @@ function ringToPath(points) {
   return `M ${first[0]},${first[1]} ` + rest.map(p => `L ${p[0]},${p[1]}`).join(' ') + ' Z'
 }
 
+// Direction de la caméra dérivée automatiquement de la déformation du plan.
+// Le sol "s'éloigne" vers (SKEW_X, VERTICAL_SQUISH) ; la caméra regarde depuis l'opposé.
+const CAMERA_DIR = (() => {
+  const cx = -SKEW_X/3
+  const cy = VERTICAL_SQUISH
+  const norm = Math.sqrt(cx * cx + cy * cy) || 1
+  return { x: cx / norm, y: cy / norm }
+})()
+
 function buildColumn(feature, score, color) {
   const heightPx = (score / 100) * MAX_HEIGHT_PX
 
   const rings = getRings(feature.geometry)
   const mainRing = rings.reduce((a, b) => (a.length > b.length ? a : b), rings[0] || [])
-  const base = projectRing(mainRing)               // plan déformé
-  const top = base.map(([x, y]) => [x, y - heightPx]) // montée strictement verticale
+  const base = projectRing(mainRing)
+  const top = base.map(([x, y]) => [x, y - heightPx])
 
   const cx = base.reduce((s, p) => s + p[0], 0) / base.length
   const cy = base.reduce((s, p) => s + p[1], 0) / base.length
 
-  const walls = []
+  const walls = { path: [], dot: [] }
   for (let i = 0; i < base.length - 1; i++) {
     const p1 = base[i], p2 = base[i + 1]
     const midX = (p1[0] + p2[0]) / 2
@@ -154,11 +201,15 @@ function buildColumn(feature, score, color) {
     const nx = midX - cx
     const ny = midY - cy
     const norm = Math.sqrt(nx * nx + ny * ny) || 1
+    const dot = (nx / norm) * CAMERA_DIR.x + (ny / norm) * CAMERA_DIR.y   // produit scalaire entre la normale du mur et la direction de la caméra
 
-    // Mur visible si son orientation "regarde vers le bas de l'écran" (face au spectateur)
-    if (ny / norm > 0.1) {
+    // Mur visible si son orientation fait face à la caméra i.e. si le produit scalaire est positif (angle < 90°)
+    if (dot > -0.2) { // seuil pour éviter les murs trop "de côté"
       const t1 = top[i], t2 = top[i + 1]
-      walls.push(`M ${p1[0]},${p1[1]} L ${p2[0]},${p2[1]} L ${t2[0]},${t2[1]} L ${t1[0]},${t1[1]} Z`)
+      walls.path.push(
+         `M ${p1[0]},${p1[1]} L ${p2[0]},${p2[1]} L ${t2[0]},${t2[1]} L ${t1[0]},${t1[1]} Z`
+        )
+      walls.dot.push(dot)
     }
   }
 
@@ -192,7 +243,7 @@ async function loadRegionData() {
 }
 
 onMounted(async () => {
-  const response = await fetch('/geo/regions.geojson')
+  const response = await fetch('/geo/regions_opti.geojson')
   const geojson = await response.json()
   features.value = geojson.features
 
