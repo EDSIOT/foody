@@ -1,99 +1,87 @@
 <template>
-  <div class="flex flex-col md:flex-row gap-4">
-    <!-- Carte SVG statique -->
-    <div class="relative flex-1 bg-white rounded-xl border border-stone-200 p-4">
-      <svg
-        ref="svgRef"
-        :viewBox="`0 0 ${width} ${height}`"
-        class="w-full h-auto"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <g v-for="feature in features" :key="feature.properties.nom">
-    <!-- Couche d'extrusion (l'épaisseur simulée), visible seulement au survol -->
-    <path
-      v-if="hoveredRegion === feature.properties.nom"
-      :d="pathGenerator(feature)"
-      :fill="getTopCuisineColor(feature.properties.nom)"
-      class="origin-center"
-      :style="{
-        transformBox: 'fill-box',
-        transform: 'translate(2px, 4px) scale(1.05)',
-        filter: 'brightness(0.65)',
-        opacity: 0.9
-      }"
-    />
+  <div class="relative bg-white rounded-xl border border-stone-200 p-6 flex-column align-center justify-center">
+    <svg
+      :viewBox="`0 0 ${outerSize} ${outerSize}`"
+      class="w-full max-w-2xl h-auto"
+      preserveAspectRatio="xMidYMid meet"
+    >
+      <!-- Anneau des proportions -->
+      <g :transform="`translate(${outerSize / 2}, ${outerSize / 2})`">
+        <path
+          v-for="(seg, i) in ringSegments"
+          :key="seg.cuisine_name"
+          :d="seg.path"
+          :fill="getColor(seg.cuisine_name)"
+          :fill-opacity="selectedRegion ? 1 : 0"
+          class="transition-opacity duration-300 ease-in"
+          stroke="#fcf6ee"
+          stroke-width="25"
+        />
+      </g>
 
-    <!-- Couche principale (la face visible du "plot") -->
-    <path
-      :d="pathGenerator(feature)"
-      :fill="getTopCuisineColor(feature.properties.nom)"
-      :fill-opacity="hoveredRegion === feature.properties.nom ? 1 : 0.8"
-      stroke="#fff"
-      stroke-width="1.5"
-      :z-index="hoveredRegion === feature.properties.nom ? 10 : 1"
-      :class="[
-        'cursor-pointer transition-all duration-200 ease-out origin-center',
-        hoveredRegion === feature.properties.nom ? 'scale-105' : 'scale-100'
-      ]"
-      :style="{
-        transformBox: 'fill-box',
-        transform: hoveredRegion === feature.properties.nom ? 'translateY(-4px)' : 'translateY(0)',
-        filter: hoveredRegion === feature.properties.nom
-          ? 'drop-shadow(0 8px 12px rgba(0,0,0,0.35)) brightness(1.08)'
-          : 'none'
-      }"
-      @mouseenter="hoveredRegion = feature.properties.nom; selectedRegion = feature.properties.nom"
-      @mouseleave="hoveredRegion = null"
-      @click="selectedRegion = feature.properties.nom"
-    />
-  </g>
-      </svg>
-    </div>
+      <!-- Labels de l'anneau -->
+      <g v-if="selectedRegion" :transform="`translate(${outerSize / 2}, ${outerSize / 2})`">
+        <text
+          v-for="seg in ringSegments"
+          :key="`label-${seg.cuisine_name}`"
+          :x="seg.labelPos[0]"
+          :y="seg.labelPos[1]"
+          text-anchor="left"
+          dominant-baseline="middle"
+          class="text-[1.5rem] font-medium fill-stone-700 pointer-events-none"
+        >
+          {{seg.cuisine_name}} {{ seg.percent }}%
+        </text>
+      </g>
 
-    <!-- Panneau latéral -->
-    <div class="w-full md:w-80 shrink-0">
-      <div class="bg-white rounded-xl border border-stone-200 shadow-sm p-5 sticky top-4 min-h-[300px]">
-        <div v-if="!selectedRegion" class="text-stone-400 text-sm flex flex-col items-center justify-center h-full py-16 text-center">
-          <h2>Infos</h2>
-          Survolez ou cliquez sur une région pour voir ses tendances culinaires
-        </div>
+      <!-- Carte, centrée dans le même repère -->
+      <g :transform="`translate(${mapOffset}, ${mapOffset})`">
+        <path
+          v-for="feature in features"
+          :key="feature.properties.nom"
+          :d="pathGenerator(feature)"
+          :fill="getTopCuisineColor(feature.properties.nom)"
+          :fill-opacity="hoveredRegion === feature.properties.nom ? 1 : 0.85"
+          stroke="#fff"
+          :stroke-width="hoveredRegion === feature.properties.nom ? 2.5 : 1"
+          :class="[
+            'cursor-pointer transition-all duration-150 origin-center',
+            hoveredRegion === feature.properties.nom ? 'scale-105' : 'scale-100'
+          ]"
+          :style="{ transformBox: 'fill-box' }"
+          @mouseenter="hoveredRegion = feature.properties.nom; selectedRegion = feature.properties.nom"
+          @mouseleave="hoveredRegion = null"
+          @click="selectedRegion = feature.properties.nom"
+        />
+      </g>
 
-        <div v-else>
-          <p class="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-1">Région</p>
-          <h2>{{ selectedRegion }}</h2>
-
-          <div v-if="!selectedTop3 || selectedTop3.length === 0" class="text-stone-400 text-sm">
-            Pas de donnée disponible pour cette région
-          </div>
-
-          <div v-else class="space-y-3">
-            <div
-              v-for="item in selectedTop3"
-              :key="item.cuisine_name"
-              class="flex items-center gap-3 p-3 rounded-lg"
-              :style="{ backgroundColor: getColor(item.cuisine_name) + '15' }"
-            >
-              <span
-                class="flex items-center justify-center w-7 h-7 rounded-full text-white text-sm font-bold shrink-0"
-                :style="{ backgroundColor: getColor(item.cuisine_name) }"
-              >
-                {{ item.rank }}
-              </span>
-              <div class="flex-1 min-w-0">
-                <p class="font-medium text-stone-800 truncate">{{ item.cuisine_name }}</p>
-                <p class="text-xs text-stone-500">score {{ item.interest_score.toFixed(1) }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      
+      
+    </svg>
+    <!-- Nom de la région survolé -->
+    <Transition name="region" mode="out-in">
+  <h2
+    :key="selectedRegion"
+    :x="outerSize / 2"
+    :y="outerSize - 24"
+    text-anchor="middle"
+  >
+    {{ selectedRegion }}
+  </h2>
+  </Transition>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import * as d3 from 'd3'
+
+const mapSize = 900       // taille interne de la carte
+const ringThickness = 30  // épaisseur de l'anneau
+const ringGap = 20        // espace entre la carte et l'anneau
+const outerSize = mapSize + 2 * (ringThickness + ringGap)
+const mapOffset = ringThickness + ringGap
+
 
 const props = defineProps({
   top3ByRegion: {
@@ -102,8 +90,7 @@ const props = defineProps({
   }
 })
 
-const width = 700
-const height = 700
+
 
 const features = ref([])
 const hoveredRegion = ref(null)
@@ -138,10 +125,11 @@ const dataByRegionNormalized = computed(() => {
   return map
 })
 
-const selectedTop3 = computed(() => {
-  if (!selectedRegion.value) return null
-  const match = dataByRegionNormalized.value[normalizeName(selectedRegion.value)]
-  return match ? match.top3 : null
+const activeTop3 = computed(() => {
+  const region = selectedRegion.value
+  if (!region) return []
+  const match = dataByRegionNormalized.value[normalizeName(region)]
+  return match ? match.top3 : []
 })
 
 const getTopCuisineColor = (regionName) => {
@@ -150,11 +138,43 @@ const getTopCuisineColor = (regionName) => {
   return top1 ? getColor(top1.cuisine_name) : FALLBACK_COLOR
 }
 
+// --- Génération de l'anneau (d3.pie + d3.arc) ---
+const ringOuterRadius = mapSize / 2 + ringGap + ringThickness
+const ringInnerRadius = mapSize / 2 + ringGap
+
+const pieGenerator = d3.pie()
+  .value(d => d.interest_score)
+  .sort(null)
+
+const arcGenerator = d3.arc()
+  .innerRadius(ringInnerRadius)
+  .outerRadius(ringOuterRadius)
+
+const labelArc = d3.arc()
+  .innerRadius((ringInnerRadius + ringOuterRadius) / 2)
+  .outerRadius((ringInnerRadius + ringOuterRadius) / 2)
+
+const ringSegments = computed(() => {
+  const data = activeTop3.value.length > 0
+    ? activeTop3.value
+    : [{ cuisine_name: null, interest_score: 1, rank: 1 }] // anneau neutre si rien survolé
+
+  const total = data.reduce((sum, d) => sum + d.interest_score, 0)
+  const arcs = pieGenerator(data)
+
+  return arcs.map(a => ({
+    cuisine_name: a.data.cuisine_name,
+    path: arcGenerator(a),
+    labelPos: labelArc.centroid(a),
+    percent: total > 0 ? Math.round((a.data.interest_score / total) * 100) : 0,
+  }))
+})
+
 // Projection adaptée à la France métropolitaine, centrée et mise à l'échelle du viewBox
 const projection = d3.geoConicConformal()
   .center([2.454071, 46.279229]) // centre approximatif de la France
   .scale(3200)
-  .translate([width / 2, height / 2])
+  .translate([mapSize / 2, mapSize / 2])
 
 const pathGenerator = computed(() => d3.geoPath().projection(projection))
 

@@ -6,6 +6,7 @@
       class="w-full h-auto"
       preserveAspectRatio="xMidYMid meet"
     >
+      <!-- Murs -->
       <g v-for="col in sortedColumns" :key="col.name">
         <path
           v-for="(wall, i) in col.walls.path"
@@ -17,9 +18,12 @@
               col.color
             )(col.walls.dot[i])
           "
-          fill-opacity="1"
+          fill-opacity="0.85"
           stroke="none"
         />
+        </g>
+        <!-- Regions -->
+        <g v-for="col in sortedColumns" :key="col.name">
         <path
           :d="col.topPath"
           :fill="hoveredRegion === col.name ? d3.color(col.color).darker(-0.5) : col.color"
@@ -141,6 +145,7 @@ const projection = d3.geoConicConformal()
   .center([2.454071, 46.279229]) // centre approximatif de la France
   .scale(3200)
   .translate([width / 2, height / 2])
+// centre approximatif de chaque région : [lon, lat] = d3.geoCentroid(feature)
 
 // --- Paramètres de déformation du plan (vue oblique sud-ouest) ---
 const SKEW_X = -0.4           // cisaillement horizontal : + = penche vers la droite en descendant
@@ -176,7 +181,7 @@ function ringToPath(points) {
 // Direction de la caméra dérivée automatiquement de la déformation du plan.
 // Le sol "s'éloigne" vers (SKEW_X, VERTICAL_SQUISH) ; la caméra regarde depuis l'opposé.
 const CAMERA_DIR = (() => {
-  const cx = -SKEW_X/3
+  const cx = -SKEW_X
   const cy = VERTICAL_SQUISH
   const norm = Math.sqrt(cx * cx + cy * cy) || 1
   return { x: cx / norm, y: cy / norm }
@@ -204,13 +209,13 @@ function buildColumn(feature, score, color) {
     const dot = (nx / norm) * CAMERA_DIR.x + (ny / norm) * CAMERA_DIR.y   // produit scalaire entre la normale du mur et la direction de la caméra
 
     // Mur visible si son orientation fait face à la caméra i.e. si le produit scalaire est positif (angle < 90°)
-    if (dot > -0.2) { // seuil pour éviter les murs trop "de côté"
+    //if (dot > -0.5) { // seuil pour éviter les murs trop "de côté"
       const t1 = top[i], t2 = top[i + 1]
       walls.path.push(
          `M ${p1[0]},${p1[1]} L ${p2[0]},${p2[1]} L ${t2[0]},${t2[1]} L ${t1[0]},${t1[1]} Z`
         )
       walls.dot.push(dot)
-    }
+    //}
   }
 
   return {
@@ -237,13 +242,38 @@ const sortedColumns = computed(() =>
   [...columns.value].sort((a, b) => a.depthKey - b.depthKey)
 )
 
+const CENTRE_REGIONS = [
+    { name: "Nord-Pas-de-Calais",   coords: [3.0573, 50.6292], feature:   7 }, // Lille
+    { name: "Haute-Normandie",      coords: [1.0993, 49.4432], feature:   3 }, // Rouen
+   { name: "Picardie",             coords: [2.2957, 49.8941], feature:   2 }, // Amiens
+    { name: "Île-de-France",        coords: [2.3522, 48.8566], feature:   0 }, // Paris
+  { name: "Basse-Normandie",      coords: [-0.3707, 49.1829], feature:  5 }, // Caen  
+    { name: "Champagne-Ardenne",    coords: [4.3670, 48.9565], feature:   1 }, // Châlons-en-Champagne
+    { name: "Lorraine",             coords: [6.1844, 49.1193], feature:   8 }, // Metz
+  { name: "Alsace",               coords: [7.7479, 48.5839], feature:   9 }, // Strasbourg
+  { name: "Bretagne",             coords: [-1.6778, 48.1173], feature:  12 }, // Rennes
+  { name: "Pays de la Loire",     coords: [-1.5536, 47.2184], feature:  11 }, // Nantes
+    { name: "Centre-Val de Loire",  coords: [1.9093, 47.9030], feature:   4 }, // Orléans
+  { name: "Bourgogne",            coords: [5.0415, 47.3220], feature:   6 }, // Dijon
+  { name: "Franche-Comté",        coords: [6.0241, 47.2378], feature:   10 }, // Besançon
+  { name: "Poitou-Charentes",     coords: [0.3333, 46.5833], feature:   13 }, // Poitiers
+  { name: "Limousin",             coords: [1.2611, 45.8336], feature:   16 }, // Limoges
+  { name: "Auvergne",             coords: [3.0870, 45.7772], feature:   18 }, // Clermont-Ferrand
+  { name: "Rhône-Alpes",           coords: [4.8357, 45.7640], feature:  17 }, // Lyon
+  { name: "Aquitaine",            coords: [-0.5792, 44.8378], feature:  14 }, // Bordeaux
+  { name: "Midi-Pyrénées",        coords: [1.4442, 43.6047], feature:   15 }, // Toulouse
+  { name: "Languedoc-Roussillon", coords: [3.8767, 43.6119], feature:   19 }, // Montpellier
+  { name: "Provence-Alpes-Côte d’Azur", coords: [5.3698, 43.2965], feature:  20 }, // Marseille
+  { name: "Corse",                coords: [8.7386, 41.9192], feature:   21 }, // Ajaccio
+]
+
 async function loadRegionData() {
   if (!selectedCuisine.value) return
   regionScores.value = await getRegionScoresForCuisine(selectedCuisine.value)
 }
 
 onMounted(async () => {
-  const response = await fetch('/geo/regions_opti.geojson')
+  const response = await fetch('/geo/regions_opti copy.geojson')
   const geojson = await response.json()
   features.value = geojson.features
 
