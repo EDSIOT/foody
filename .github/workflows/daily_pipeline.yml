@@ -13,10 +13,10 @@ jobs:
 
     steps:
       - name: Checkout du code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Installer uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v20cfd1bf945f4377ade1205e4dbc17946fc9a30d
 
       - name: Installer les dépendances
         run: uv sync
@@ -28,7 +28,7 @@ jobs:
 
       - name: Uploader les logs en cas d'échec
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: pipeline-logs
           path: logs/
