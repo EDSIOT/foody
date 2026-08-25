@@ -28,7 +28,7 @@ jobs:
 
       - name: Uploader les logs en cas d'échec
         if: failure()
-        uses: actions/upload-artifact@v46
+        uses: actions/upload-artifact@v6
         with:
           name: pipeline-logs
           path: logs/
