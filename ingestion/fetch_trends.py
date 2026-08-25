@@ -22,6 +22,7 @@ CUISINE_TOPICS = {
     'pâtisserie': '/m/0hnyx',
     'traiteur': '/m/02yn76',
     'barbecue': '/g/1223qdcp',
+    'glace': '/m/0cxn2',
 }
 
 ANCHOR_NAME = 'Pizza'
