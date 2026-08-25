@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Installer uv
-        uses: astral-sh/setup-uv@latest
+        uses: astral-sh/setup-uv@v6
 
       - name: Installer les dépendances
         run: uv sync
