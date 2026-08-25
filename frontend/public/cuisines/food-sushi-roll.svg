@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Plate -->
+  <ellipse cx="100" cy="150" rx="75" ry="20" fill="#e2e8f0"/>
+  <ellipse cx="100" cy="147" rx="70" ry="17" fill="#1e293b" opacity="0.08"/>
+  <!-- Sushi roll 1 (left) -->
+  <ellipse cx="70" cy="110" rx="30" ry="22" fill="#1e293b"/>
+  <ellipse cx="70" cy="108" rx="28" ry="20" fill="#1e293b"/>
+  <ellipse cx="70" cy="108" rx="24" ry="17" fill="white"/>
+  <ellipse cx="70" cy="108" rx="20" ry="14" fill="#10b981" opacity="0.3"/>
+  <!-- Rice texture -->
+  <circle cx="60" cy="103" r="2" fill="#e2e8f0"/>
+  <circle cx="68" cy="100" r="1.5" fill="#e2e8f0"/>
+  <circle cx="78" cy="104" r="2" fill="#e2e8f0"/>
+  <circle cx="74" cy="115" r="1.5" fill="#e2e8f0"/>
+  <circle cx="63" cy="113" r="2" fill="#e2e8f0"/>
+  <!-- Fish center -->
+  <ellipse cx="70" cy="108" rx="10" ry="7" fill="#ef4444" opacity="0.8"/>
+  <rect x="66" y="105" width="3" height="6" rx="1" fill="#f59e0b"/>
+  <!-- Sushi roll 2 (right) -->
+  <ellipse cx="130" cy="110" rx="30" ry="22" fill="#1e293b"/>
+  <ellipse cx="130" cy="108" rx="28" ry="20" fill="#1e293b"/>
+  <ellipse cx="130" cy="108" rx="24" ry="17" fill="white"/>
+  <ellipse cx="130" cy="108" rx="20" ry="14" fill="#10b981" opacity="0.3"/>
+  <circle cx="120" cy="103" r="2" fill="#e2e8f0"/>
+  <circle cx="128" cy="100" r="1.5" fill="#e2e8f0"/>
+  <circle cx="138" cy="104" r="2" fill="#e2e8f0"/>
+  <circle cx="134" cy="115" r="1.5" fill="#e2e8f0"/>
+  <circle cx="123" cy="113" r="2" fill="#e2e8f0"/>
+  <!-- Avocado center -->
+  <ellipse cx="130" cy="108" rx="10" ry="7" fill="#10b981"/>
+  <ellipse cx="130" cy="108" rx="5" ry="3.5" fill="#92400e" opacity="0.5"/>
+  <!-- Chopsticks -->
+  <line x1="145" y1="55" x2="175" y2="140" stroke="#92400e" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="150" y1="55" x2="168" y2="140" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round"/>
+</svg>

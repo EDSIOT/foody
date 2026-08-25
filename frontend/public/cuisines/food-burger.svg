@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Top bun -->
+  <path d="M35 85 Q35 40 100 40 Q165 40 165 85 Z" fill="#f59e0b"/>
+  <path d="M40 82 Q40 48 100 48 Q160 48 160 82 Z" fill="#fbbf24"/>
+  <!-- Sesame seeds -->
+  <ellipse cx="80" cy="58" rx="5" ry="3" fill="#e2e8f0" transform="rotate(-15 80 58)"/>
+  <ellipse cx="110" cy="55" rx="5" ry="3" fill="#e2e8f0" transform="rotate(10 110 55)"/>
+  <ellipse cx="95" cy="50" rx="4" ry="2.5" fill="#e2e8f0" transform="rotate(5 95 50)"/>
+  <ellipse cx="125" cy="62" rx="4" ry="2.5" fill="#e2e8f0" transform="rotate(-10 125 62)"/>
+  <!-- Lettuce -->
+  <path d="M30 92 Q50 82 70 95 Q90 82 110 95 Q130 82 150 95 Q170 82 175 92 L175 100 Q150 90 130 100 Q110 90 90 100 Q70 90 50 100 L30 100 Z" fill="#10b981"/>
+  <!-- Tomato slice -->
+  <rect x="35" y="98" width="130" height="12" rx="3" fill="#ef4444"/>
+  <!-- Patty -->
+  <rect x="33" y="112" width="134" height="22" rx="6" fill="#92400e"/>
+  <rect x="36" y="115" width="128" height="16" rx="4" fill="#1e293b" opacity="0.15"/>
+  <!-- Cheese -->
+  <path d="M30 112 L170 112 L175 120 Q165 126 155 118 Q140 128 125 118 Q110 128 95 118 Q80 128 65 118 Q50 128 35 118 L25 120 Z" fill="#fbbf24"/>
+  <!-- Bottom bun -->
+  <rect x="35" y="136" width="130" height="28" rx="8" fill="#f59e0b"/>
+  <rect x="38" y="136" width="124" height="14" rx="4" fill="#fbbf24" opacity="0.5"/>
+</svg>

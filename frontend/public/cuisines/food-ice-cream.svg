@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Cone -->
+  <path d="M65 110 L100 185 L135 110 Z" fill="#f59e0b"/>
+  <!-- Cone cross pattern -->
+  <line x1="72" y1="120" x2="118" y2="160" stroke="#92400e" stroke-width="1.5" opacity="0.3"/>
+  <line x1="80" y1="120" x2="122" y2="150" stroke="#92400e" stroke-width="1.5" opacity="0.3"/>
+  <line x1="90" y1="120" x2="126" y2="140" stroke="#92400e" stroke-width="1.5" opacity="0.3"/>
+  <line x1="128" y1="120" x2="82" y2="160" stroke="#92400e" stroke-width="1.5" opacity="0.3"/>
+  <line x1="120" y1="120" x2="78" y2="150" stroke="#92400e" stroke-width="1.5" opacity="0.3"/>
+  <line x1="110" y1="120" x2="74" y2="140" stroke="#92400e" stroke-width="1.5" opacity="0.3"/>
+  <!-- Bottom scoop (chocolate) -->
+  <circle cx="100" cy="95" r="35" fill="#92400e"/>
+  <circle cx="88" cy="86" r="8" fill="white" opacity="0.1"/>
+  <!-- Middle scoop (strawberry) -->
+  <circle cx="85" cy="65" r="28" fill="#ef4444"/>
+  <circle cx="76" cy="58" r="6" fill="white" opacity="0.15"/>
+  <!-- Top scoop (vanilla) -->
+  <circle cx="110" cy="55" r="26" fill="#fbbf24"/>
+  <circle cx="102" cy="48" r="5" fill="white" opacity="0.2"/>
+  <!-- Chocolate drip -->
+  <path d="M75 90 Q72 100 75 108" fill="none" stroke="#1e293b" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+  <path d="M125 90 Q128 98 125 105" fill="none" stroke="#1e293b" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+  <!-- Cherry -->
+  <circle cx="110" cy="30" r="7" fill="#ef4444"/>
+  <circle cx="108" cy="27" r="2" fill="white" opacity="0.3"/>
+  <path d="M110 23 Q115 15 118 18" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round"/>
+</svg>

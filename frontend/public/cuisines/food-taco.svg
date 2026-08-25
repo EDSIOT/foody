@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Taco shell -->
+  <path d="M25 130 Q100 30 175 130" fill="#f59e0b"/>
+  <path d="M28 128 Q100 35 172 128" fill="#fbbf24"/>
+  <!-- Shell texture -->
+  <path d="M45 115 Q70 55 95 85" fill="none" stroke="#92400e" stroke-width="1" opacity="0.15"/>
+  <path d="M110 70 Q130 50 155 115" fill="none" stroke="#92400e" stroke-width="1" opacity="0.15"/>
+  <!-- Meat filling -->
+  <path d="M40 120 Q100 65 160 120" fill="#92400e"/>
+  <path d="M45 118 Q100 70 155 118" fill="#92400e" opacity="0.8"/>
+  <!-- Lettuce -->
+  <path d="M38 120 Q55 95 70 110 Q85 90 100 108 Q115 88 130 108 Q145 92 162 120" fill="#10b981"/>
+  <!-- Tomato chunks -->
+  <circle cx="65" cy="108" r="6" fill="#ef4444"/>
+  <circle cx="100" cy="100" r="7" fill="#ef4444"/>
+  <circle cx="135" cy="108" r="6" fill="#ef4444"/>
+  <!-- Cheese shreds -->
+  <rect x="55" y="112" width="10" height="3" rx="1.5" fill="#fbbf24" transform="rotate(-10 60 113)"/>
+  <rect x="85" y="106" width="10" height="3" rx="1.5" fill="#fbbf24" transform="rotate(15 90 107)"/>
+  <rect x="115" y="110" width="10" height="3" rx="1.5" fill="#fbbf24" transform="rotate(-5 120 111)"/>
+  <rect x="140" y="114" width="8" height="3" rx="1.5" fill="#fbbf24" transform="rotate(10 144 115)"/>
+  <!-- Sour cream dollops -->
+  <circle cx="80" cy="102" r="4" fill="white" opacity="0.7"/>
+  <circle cx="120" cy="103" r="4" fill="white" opacity="0.7"/>
+  <!-- Shell bottom edge -->
+  <path d="M25 130 Q100 140 175 130" fill="none" stroke="#92400e" stroke-width="2" opacity="0.3"/>
+</svg>

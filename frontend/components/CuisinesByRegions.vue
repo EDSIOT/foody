@@ -42,20 +42,13 @@
             :key="cuisine.cuisine_name"
             class="flex items-center gap-3"
           >
+            <!-- Affichage de l'image de la cuisine et son nom -->
+            <img
+              :src="getSvg(cuisine.cuisine_name)"
+              alt=""
+              :width=" getImageSize(cuisine.interest_score) "/>
             <span class="text-sm text-stone-600 w-40 truncate shrink-0">
               {{ cuisine.cuisine_name }}
-            </span>
-            <div class="flex-1 h-5 bg-stone-100 rounded-full overflow-hidden">
-              <div
-                class="h-full rounded-full transition-all duration-500"
-                :style="{
-                  width: `${cuisine.interest_score}%`,
-                  backgroundColor: getColor(cuisine.cuisine_name)
-                }"
-              />
-            </div>
-            <span class="text-sm font-medium text-stone-700 w-10 text-right shrink-0">
-              {{ cuisine.interest_score.toFixed(0) }}
             </span>
           </div>
         </div>
@@ -83,15 +76,39 @@ const CUISINE_COLORS = {
   'Kebab': '#c9a227',
   'Hamburger': '#a4443c',
   'Taco': '#6b8e4e',
-  'restaurant italien': '#d1495b',
+  'restaurant vegetarien': '#d1495b',
   'restaurant chinois': '#e8a33d',
-  'restaurant mexicain': '#3d8361',
-  'restaurant indien': '#f2994a',
   'bar': '#5c6b73',
   'café': '#8d6a4a',
+  'glace': '#DD5F89',
 }
 const FALLBACK_COLOR = '#a3a3a3'
 const getColor = (cuisine) => CUISINE_COLORS[cuisine] || FALLBACK_COLOR
+
+const CUISINE_SVG = {
+  'Pizza': '/cuisines/pizza.svg',
+  'Sushi': '/cuisines/food-sushi-roll.svg',
+  'Kebab': '/cuisines/food-taco.svg',
+  'Hamburger': '/cuisines/food-burger.svg',
+  'Taco': '/cuisines/food-taco.svg',
+  'restaurant vegetarien': '/cuisines/food2-avocado.svg',
+  'restaurant chinois': '/cuisines/food-chopsticks-bowl.svg',
+  'bar': '/cuisines/food-taco.svg',
+  'café': '/cuisines/food-coffee-cup.svg',
+  'glace': '/cuisines/food-ice-cream.svg',
+  'crêperie': '/cuisines/food2-pancakes.svg',
+}
+
+const FALLBACK_SVG = '/cuisines/food2-steak.svg'
+
+const getSvg = (cuisine) => CUISINE_SVG[cuisine] || FALLBACK_SVG
+
+const getImageSize = (score) => {
+  const minSize = 30
+  const maxSize = 100
+
+  return minSize + (score / 50) * (maxSize - minSize)
+}
 
 const regions = computed(() => {
   return Object.entries(rawData.value)
