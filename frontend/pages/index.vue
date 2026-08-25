@@ -1,12 +1,20 @@
 
 
 <template>
+
   <div class="p-6 max-w-6xl mx-auto space-y-12">
     <div>
       <h1>Foody</h1>
       <p class="text-stone-500">Tendances culinaires selon les recherches google, mises à jour quotidiennement</p>
     </div>
-
+    
+    <!-- Section 0 : détail des cuisines par région -->
+    <section>
+      <h2 class="font-display text-xl font-semibold text-stone-800 mb-4">
+        Détail des cuisines par région
+      </h2>
+      <RegionCuisineBreakdown />
+    </section>
     <!-- Section 1 : carte plate, top 3 par région -->
     <section>
       <h2 class="font-display text-xl font-semibold text-stone-800 mb-4">
