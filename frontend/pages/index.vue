@@ -13,7 +13,7 @@
       <h2 class="font-display text-xl font-semibold text-stone-800 mb-4">
         Détail des cuisines par région
       </h2>
-      <RegionCuisineBreakdown />
+      <CuisinesByRegions />
     </section>
     <!-- Section 1 : carte plate, top 3 par région -->
     <section>
