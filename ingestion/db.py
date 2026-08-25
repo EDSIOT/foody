@@ -20,7 +20,7 @@ def ensure_schema(engine):
     CREATE TABLE IF NOT EXISTS raw_cuisine_trends (
         id SERIAL PRIMARY KEY,
         cuisine_name TEXT NOT NULL,
-        city_name TEXT NOT NULL,
+        region_name TEXT NOT NULL,
         geo_code TEXT,
         interest_score FLOAT NOT NULL,
         is_normalized BOOLEAN DEFAULT FALSE,
@@ -38,9 +38,9 @@ def ensure_schema(engine):
 def insert_cuisine_trends(engine, df_wide, anchor_name, country_code='FR'):
     df = df_wide.reset_index()
     df.index.name = None
-    df = df.rename(columns={df.columns[0]: 'city_name'})
+    df = df.rename(columns={df.columns[0]: 'region_name'})
 
-    id_cols = ['city_name', 'geoCode']
+    id_cols = ['region_name', 'geoCode']
     cuisine_cols = [c for c in df.columns if c not in id_cols]
 
     df_long = df.melt(
