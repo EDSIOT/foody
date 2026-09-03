@@ -64,14 +64,39 @@
               </g>
             </svg>
           </div>
-  <!-- Affichage des images des cuisines et des noms -->
+  <!-- Affichage regions -->  
+  <div
+    v-for="(region, i) in filteredRegions"
+      :key="region.name"
+      class="absolute flex items-center gap-3 z-10"
+      :style="{ 
+        left: `calc(50% + ${Math.cos((i / filteredRegions.length) * 2 * Math.PI - Math.PI / 2) * 400}px)`,
+        top: `calc(50% + ${Math.sin((i / filteredRegions.length) * 2 * Math.PI - Math.PI / 2) * 400}px)`,
+        transform: `translate(-50%, -50%)`
+      }"
+      @mouseenter="hoveredRegion = region.name"
+      @mouseleave="hoveredRegion = null"
+    >
+      <div
+        class="flex flex-row items-center gap-1 transition-transform duration-200"
+        :style="{transform: `rotate(${getRegionRotation(i, filteredRegions.length)}deg)`}">
+        <span 
+          class="text-sm text-stone-600 truncate shrink-0 text-center px-2 bg-white rounded-full mx-3"
+          :style="{ transform: i > filteredRegions.length / 2 ? 'rotate(180deg)': ''}"
+        >
+          {{ region.name }}
+        </span>
+      </div>
+    </div>
+
+  <!-- Affichage des images des cuisines et leur position dans la region -->
   <div
     v-for="(cuisine, i) in region.cuisines"
     :key="cuisine.cuisine_name"
     class="absolute flex items-center gap-3 z-10"
     :style="{ 
-      left: `calc(50% + ${Math.cos((i / region.cuisines.length) * 2 * Math.PI - Math.PI / 2) * 140}px)`,
-      top: `calc(50% + ${Math.sin((i / region.cuisines.length) * 2 * Math.PI - Math.PI / 2) * 140}px)`,
+      left: `calc(50% + ${Math.cos((i / region.cuisines.length) * 2 * Math.PI - Math.PI / 2) * 200}px)`,
+      top: `calc(50% + ${Math.sin((i / region.cuisines.length) * 2 * Math.PI - Math.PI / 2) * 200}px)`,
       transform: `translate(-50%, -50%)`
     }"
     @mouseenter="hoveredCuisine = cuisine.cuisine_name"
@@ -79,7 +104,7 @@
   >
     <div
       class="flex flex-row items-center gap-1 transition-transform duration-200"
-      :style="{transform: `rotate(${getRotation(i, region.cuisines.length)}deg)`}">
+      :style="{transform: `rotate(${getCuisineRotation(i, region.cuisines.length)}deg)`}">
       <img
         :src="getSvg(cuisine.cuisine_name)"
         alt=""
@@ -116,7 +141,7 @@
 import { ref, computed, onMounted } from 'vue'
 
 const searchQuery = ref('')
-const expandedRegion = ref(null)
+const expandedRegion = ref('Île-de-France') // Par défaut, on ouvre la région de Ile-de-France
 const rawData = ref({})
 const hoveredCuisine = ref(null)
 
@@ -171,7 +196,12 @@ const getCirclePosition = (index, total, centerX, centerY, radius) => {
   }
 }
 
-function getRotation(i, total) {
+function getCuisineRotation(i, total) {
+  const angle = (i / total) * 360 - 90
+  return angle
+}
+
+function getRegionRotation(i, total) {
   const angle = (i / total) * 360 - 90
   const isLeft = angle > 90
   return isLeft ? angle :  angle
